@@ -1,0 +1,61 @@
+brain-ag-api: 3.0.3
+info:
+  title: BrainAgri Farm Registry API
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+paths:
+  /health:
+    get:
+      responses: { '200': { description: OK } }
+  /producers:
+    post:
+      summary: Create producer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProducerIn'
+      responses:
+        '201': { description: Created }
+        '400': { description: Validation error }
+    get:
+      summary: List producers
+      parameters:
+        - in: query
+          name: offset
+          schema: { type: integer }
+        - in: query
+          name: limit
+          schema: { type: integer }
+      responses: { '200': { description: OK } }
+  /producers/{id}:
+    get: { responses: { '200': { description: OK }, '404': { description: Not Found } } }
+    put: { responses: { '204': { description: No Content } } }
+    delete: { responses: { '204': { description: No Content } } }
+  /producers/{producerId}/farms:
+    post: { responses: { '201': { description: Created }, '400': { description: Validation error } } }
+    get:  { responses: { '200': { description: OK } } }
+  /farms/{farmId}:
+    put: { responses: { '204': { description: No Content } } }
+    delete: { responses: { '204': { description: No Content } } }
+  /farms/{farmId}/plantings:
+    post: { responses: { '201': { description: Created } } }
+    get:
+      parameters:
+        - in: query
+          name: season
+          schema: { type: string }
+      responses: { '200': { description: OK } }
+  /dashboard:
+    get: { responses: { '200': { description: OK } } }
+components:
+  schemas:
+    CreateProducerIn:
+      type: object
+      required: [docType, docNumber, name]
+      properties:
+        docType: { type: string, enum: [CPF, CNPJ] }
+        docNumber: { type: string }
+        name: { type: string }
